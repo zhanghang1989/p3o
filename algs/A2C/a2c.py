@@ -61,14 +61,13 @@ class A2C:
 
             returns = returns.detach()
             values_detach = values.detach()
-            values_detach = values.detach()
             masks_detach = masks.detach()
             rewards_detach = rewards.detach()
             # Generalized Advantage Estimataion
             for step in reversed(range(num_steps)):
 
                 if (step == num_steps - 1): # since the gae requires last values and it is in a separate var
-                    delta_t = rewards_detach[step] + (1.0 - masks_detach[step + 1]) * self.gamma * last_values.detach() - values[step]
+                    delta_t = rewards_detach[step] + (1.0 - masks_detach[step + 1]) * self.gamma * last_values.detach() - values_detach[step]
 
                 else:
                     delta_t = rewards_detach[step] + (1.0 - masks_detach[step + 1]) * self.gamma * values_detach[step + 1] - values_detach[step]

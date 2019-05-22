@@ -1,26 +1,27 @@
-# RL_Off_Policy
+# Gluon-RL
 
-## Code to Convert
+Gluon-RL is a toolkit for Reinformcement Learning models.
 
-- [x] main.py
-- [x] models/networks.py
-- [x] algs/A2C/a2c.py
-- [ ] algs/OFPG/ofpg.py
-- [ ] algs/OFPG/buffer.py
-- [x] oailibs/common/misc_util.py
-- [x] misc/torch_utility.py
-- [x] misc/runner.py
+# Getting Started
 
-## Questions
+On Ubuntu 16.04, run the following script to install the environment dependencies:
 
-- [ ] models/networks.py: [L179](https://github.com/zhanghang1989/RL_Off_Policy/blob/patch-1/models/networks.py#L179), what is the init function doing
+```
+sudo apt-get install -y libsm6 libxrender1 libfontconfig1
 
+wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh && bash Anaconda3-2018.12-Linux-x86_64.sh && \
+    source ~/.bashrc && conda update -y conda && conda update -y anaconda
 
-## Terminal Commands
+conda create -n gluonrl python=3.7.1 anaconda && conda activate gluonrl && \
+    conda install -y -n gluonrl -c conda-forge pyhamcrest
 
-please manually set the following environment variables in the terminal, if you'd like to disable cudnn autotune or set cudnn deterministic:
+pip install gym && conda install -y -n gluonrl -c ska pygtk && pip install pyopengl opencv-python gym[atari] mxnet
+```
+
+Set the following environmental variables for reproducible experiments:
 
 ```
 export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
 export MXNET_ENFORCE_DETERMINISM=1
+export OMP_NUM_THREADS=1
 ```

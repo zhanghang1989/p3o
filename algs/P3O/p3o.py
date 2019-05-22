@@ -4,7 +4,7 @@ from mxnet.gluon import HybridBlock
 from mxnet.gluon.loss import Loss
 import numpy as np
 
-class OFPG:
+class P3O:
 
     def __init__(self, model,
                  vf_coef=0.5,
@@ -39,7 +39,6 @@ class OFPG:
             use_offpolicy_ent: if it is False, there would be no entropy maximization for off policy
             use_ess_is_clipping: use ESS for computing lambda as clipping variable
             device: to indicate use of cpu or gpu
-            control_ofpg_update: avoid updates when return < 0
         '''
         self.model = model
         self.vf_coef = vf_coef
@@ -140,8 +139,8 @@ class OFPG:
                 #######
 
                 # obs_var is reshaped to be nsteps * num_env, *obs_var.shape[2:]
-                entropies, values, _, pi_probs_logs = self.model(replay_buffer['obs'], None, False)
-                _, last_values, _, _ = self.model(replay_buffer['last_obs'], None, False) # [num_env, 1]
+                entropies, values, _, pi_probs_logs = self.model(replay_buffer['obs'].as_in_context(self.device), None, False)
+                _, last_values, _, _ = self.model(replay_buffer['last_obs'].as_in_context(self.device), None, False) # [num_env, 1]
 
                 num_steps, num_envs = rewards.shape
                 entropies = entropies.reshape(num_steps, num_envs)
@@ -153,15 +152,15 @@ class OFPG:
                 # get pi_[logs/probs](at|st) where at ~ beta.  ==> off-policy trajectory
                 # get beta_[logs/probs](at|st) where at ~ beta ==> on-policy trajectory
                 #######
-                ind = mx.nd.stack(mx.nd.arange(beta_actions.reshape(-1, 1).size), beta_actions.reshape(-1, 1).astype('float32'))
+                ind = mx.nd.stack(mx.nd.arange(beta_actions.reshape(-1, 1).size), beta_actions.reshape(-1, 1).astype('float32')).as_in_context(self.device)
                 pi_sampled_probs = mx.nd.gather_nd(pi_probs, indices=ind) #(nsteps * num_env, 1)
                 log_probs  = mx.nd.gather_nd(pi_logs, indices=ind)  #(nsteps * num_env, 1)
-                beta_sampled_probs = mx.nd.gather_nd(beta_probs, indices=ind) #(nsteps * num_env, 1)
+                beta_sampled_probs = mx.nd.gather_nd(beta_probs.as_in_context(self.device), indices=ind) #(nsteps * num_env, 1)
 
                 #######
                 # compute kl_loss(beta|pi) where bi is target dist
                 #######
-                kl_term = self.kl_loss(beta_logs.detach(), pi_probs).mean()
+                kl_term = self.kl_loss(beta_logs.detach().as_in_context(self.device), pi_probs).mean()
                 kl_term_out = kl_term.asscalar()
 
 

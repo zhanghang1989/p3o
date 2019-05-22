@@ -15,7 +15,6 @@ def set_global_seeds(i):
 
     myseed = i  + 1000 * rank if i is not None else None
 
-    print('my seed ===>', myseed)
     import mxnet as mx
     mx.random.seed(myseed)
     np.random.seed(myseed)

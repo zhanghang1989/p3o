@@ -8,13 +8,10 @@ import random
 import misc.env as env_fn
 from oailibs.common.vec_env.vec_frame_stack import VecFrameStack
 from oailibs.common import set_global_seeds
-
 from misc.utils import create_dir, explained_variance, EpisodeStats, csv_writer, safemean
 from misc.mxnet_utility import update_linear_schedule
 from misc.runner import Runner
-
 from oailibs import logger
-
 
 parser = argparse.ArgumentParser()
 
@@ -24,22 +21,20 @@ parser.add_argument('--use_linear_lr_decay', action='store_true', default=False,
 parser.add_argument('--eps', type=float, default=1e-5, help = 'RMSProp epsilon')
 parser.add_argument('--alpha', type=float, default=0.99, help = 'RMSProp decay parameter ')
 
-# A2C params
+# A2C/P3O params
 parser.add_argument('--vf_coef', type=float, default=0.5, help = 'Coefficient of value function loss in the total loss function')
 parser.add_argument('--ent_coef', type=float, default=0.01, help = 'Coeffictiant of the policy entropy')
 parser.add_argument('--max_gradient_norm', type=float, default=0.5, help = 'Max gradient norm')
 parser.add_argument('--tau', type=float, default=0.95 , help = 'Coefficient of gae')
-parser.add_argument('--use_gae', default=False, action='store_true', help = 'whether to use GAE or not')
-
-# OFPG Params
-parser.add_argument('--kl_coef', type=float, default = 1.0, help = 'coefficient of KL')
+parser.add_argument('--use_gae', default=False, action='store_true', help = 'whether to use GAE or not [default False]')
+parser.add_argument('--kl_coef', type=float, default = 0.10, help = 'coefficient of KL')
 parser.add_argument('--is_factor', type=float, default = 1.0, help = 'importance weight clipping factor')
-parser.add_argument('--frames_waits', type=int, default = 1000, help = 'Min frames to start sampling from replay')
+parser.add_argument('--frames_waits', type=int, default = 15000, help = 'Min frames to start sampling from replay')
 parser.add_argument('--replay_size', type=int, default = 50000, help ='Replay buffer size int(50000)')
-parser.add_argument('--replay_ratio', type=int, default = 4, help ='How many (on average) batches of data to sample from the replay buffer')
+parser.add_argument('--replay_ratio', type=int, default = 2, help ='How many (on average) batches of data to sample from the replay buffer')
 parser.add_argument('--use_offpolicy_ent', default=False, action='store_true', help ='Entropy for off policy [default False]')
 parser.add_argument('--use_ess_is_clipping', default=False, action='store_true', help ='Use ESS for IS clipping[default False]')
-parser.add_argument('--sample_mult', type=int, default = 1, help ='is used to decide batch size of off-policies :sample_mult * num_env ')
+parser.add_argument('--sample_mult', type=int, default = 6, help ='is used to decide batch size of off-policies :sample_mult * num_env ')
 
 # RL generic
 parser.add_argument('--gamma', type=float, default=0.99, help = 'Discount factor [0,1]')
@@ -50,20 +45,18 @@ parser.add_argument('--env_name', type=str, default='PongNoFrameskip-v4')
 parser.add_argument('--num_env', type=int, default=16)
 parser.add_argument('--reward_scale', type=float, default=1.0)
 parser.add_argument('--gamestate', default=None)
-parser.add_argument('--num_steps', type=int, default=5, help ='number of forward steps in A2C')
+parser.add_argument('--num_steps', type=int, default=16, help ='number of forward steps')
 parser.add_argument('--total_timesteps', type=int, default=int(80e6), help='total number of timesteps to train on ')
 
-parser.add_argument('--seed', type=int, default=1)
-parser.add_argument('--alg_name', type=str, default='a2c')
+parser.add_argument('--seed', type=int, default=0)
+parser.add_argument('--alg_name', type=str, default='a2c', help='can be either a2c or p3o')
 parser.add_argument('--disable_cuda', default=False, action='store_true')
-parser.add_argument('--cuda_deterministic', default=False, action='store_true')
-parser.add_argument('--set_num_threads', default=False, action='store_true', help='set_num_threads')
 
 parser.add_argument('--log_id', default='dummy')
 parser.add_argument('--check_point_dir', default='./ck')
 parser.add_argument('--log_dir', default='./log_dir')
 parser.add_argument('--log_interval', type=int, default=50, help='log interval, one log per n updates')
-parser.add_argument('--save_freq', type=int, default = 250)
+parser.add_argument('--save_freq', type=int, default = 500)
 
 parser.add_argument('--save_video_interval', type=int, default = 0, help ='Video save interval')
 parser.add_argument('--save_video_length', type=int, default = 100, help ='Video length')
@@ -184,6 +177,8 @@ if __name__ == "__main__":
     else:
         raise ValueError("Env %s is not supported" % (env.observation_space.shape))
 
+    print('-----------------------------')
+    print("Network Architecture")
     print(model)
     print('-----------------------------')
     print("Name of env:", args.env_name)
@@ -195,7 +190,7 @@ if __name__ == "__main__":
     print('----------------------------')
 
     ##### rollout/batch generator
-    rollouts = Runner(env=env, model=model, nsteps=args.num_steps, device = device)
+    rollouts = Runner(env=env, model=model, nsteps=args.num_steps, device=device)
     replay_buffer = None
 
     ##### algorithm setup
@@ -208,9 +203,9 @@ if __name__ == "__main__":
                       tau=args.tau,
                       device = device)
 
-    elif str.lower(args.alg_name) == 'ofpg':
-        import algs.OFPG.ofpg as alg
-        alg = alg.OFPG(model= model, vf_coef=args.vf_coef, ent_coef=args.ent_coef,
+    elif str.lower(args.alg_name) == 'p3o':
+        import algs.P3O.p3o as alg
+        alg = alg.P3O(model= model, vf_coef=args.vf_coef, ent_coef=args.ent_coef,
                       max_gradient_norm=args.max_gradient_norm,
                       gamma=args.gamma,
                       use_gae=args.use_gae,
@@ -222,7 +217,7 @@ if __name__ == "__main__":
                       device = device,
                       action_space_type = env.action_space.__class__.__name__
                       )
-        from algs.OFPG.buffer import Buffer
+        from algs.P3O.buffer import Buffer
         replay_buffer = Buffer(num_envs = args.num_env,
                                nsteps=args.num_steps,
                                sample_multiplier = args.sample_mult,
@@ -289,7 +284,7 @@ if __name__ == "__main__":
             np.mean(on_policy_stats['returns']):
 
             params_nd = [x.grad() for x in model.collect_params().values()]
-            total_grad_norm = mx.gluon.utils.clip_global_norm(params_nd, args.max_gradient_norm, check_isfinite=False)
+            total_grad_norm = mx.gluon.utils.clip_global_norm(params_nd, args.max_gradient_norm)
             trainer.step(1)
         else:
             total_grad_norm = 0
@@ -305,7 +300,7 @@ if __name__ == "__main__":
                     off_policy_stats = alg.train(replay_buffer = replay_buffer.get())
 
                 params_nd = [x.grad() for x in model.collect_params().values()]
-                total_grad_norm = mx.gluon.utils.clip_global_norm(params_nd, args.max_gradient_norm, check_isfinite=False)
+                total_grad_norm = mx.gluon.utils.clip_global_norm(params_nd, args.max_gradient_norm)
                 trainer.step(1)
                 off_policy_stats['total_grad_norm'] = total_grad_norm
 
@@ -316,13 +311,12 @@ if __name__ == "__main__":
                 if (update % args.log_interval == 0 or update == 1):
                     print('--------OFF-Policy-----------')
                     print("\rpolicy_loss: %.4f \n\rvalue_loss: %.4f\n \
-                           \rkl_loss: %.4f\n\rTotal loss: %.4f\n\rtotal_grad_norm: %.4f\n\rIS ratio [mean]: %.4f\n\rreturn [mean]: %.4f" %
+                           \rkl_loss: %.4f\n\rTotal loss: %.4f\n\rtotal_grad_norm: %.4f\n\rreturn [mean]: %.4f" %
                          (off_policy_stats['policy_loss'],
                          off_policy_stats['value_loss'],
                          off_policy_stats['kl_loss'],
                          off_policy_stats['loss'],
                          off_policy_stats['total_grad_norm'],
-                         off_policy_stats['ratio_stats'],
                          np.mean(off_policy_stats['returns']))
                          )
                     print("kl_coef: %.5f" % (alg.kl_coef))
@@ -339,7 +333,7 @@ if __name__ == "__main__":
         # Calculate the fps (frame per second)
         fps = int(( update * nbatch) / nseconds)
 
-        if (update % args.log_interval == 0 or update == 1 ) and len(data['episode_rewards']) > 1:
+        if (update % args.log_interval == 0 or update == 1 ) and len(epinfobuf) > 1:
 
             # Calculates if value function is a good predicator of the returns (ev > 1)
             # or if it's just worse than predicting nothing (ev =< 0)

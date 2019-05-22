@@ -59,7 +59,7 @@ class CategoricalDistribution(object):
         """
         value = value.expand_dims(-1)
         value, log_pmf = broadcast_tensors(value, self.logits)
-        ind = mx.nd.stack(mx.nd.arange(value.shape[0]), value[:, 0].astype('float32'))
+        ind = mx.nd.stack(mx.nd.arange(value.shape[0], ctx=value.context), value[:, 0].astype('float32'))
         return mx.nd.gather_nd(log_pmf, indices=ind)
 
     def entropy(self):
