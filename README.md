@@ -3,9 +3,8 @@ P3O: Policy-on Policy-off Policy Optimization
 
 On-policy reinforcement learning (RL) algorithms have high sample complexity while off-policy algorithms are difficult to tune. Merging the two holds the promise to develop efficient algorithms that generalize across diverse environments. It is however challenging in practice to find suitable hyper-parameters that govern this trade off. This paper develops a simple algorithm named P3O that interleaves off-policy updates with on-policy updates. P3O uses the effective sample size between the behavior policy and the target policy to control how far they can be from each other and does not introduce any additional hyper-parameters. Extensive experiments on the Atari-2600 and MuJoCo benchmark suites show that this simple technique is highly effective in reducing the sample complexity of state-of-the-art algorithms.
 
-This code provides an implementation of P3O:
 
-If you use this code please cite the paper using the bibtex reference below.
+This repository provides an implementation of P3O. If you use this code please cite the paper using the bibtex reference below.
 
 ```
 @article{fakoorp3o,
