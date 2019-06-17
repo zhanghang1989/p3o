@@ -22,7 +22,7 @@ If you use this code please cite the paper using the bibtex reference below.
 ```
 # Acknowledgements - OpenAI Baselines
 
-Special thanks to OpenAI for the Baselines implementations. Various enviroment generation, monitoring, and logging are based on OpenAI Baselines. "p3o/oailibs/oailibs" contains related codes.
+Special thanks to OpenAI for the Baselines implementations. Enviroment generation such as Atari and MujoCo, monitoring, and logging are based/copied on/from OpenAI Baselines <https://github.com/openai/baselines>. "p3o/oailibs/oailibs" contains related codes.
 
 # Gluon-RL
 
