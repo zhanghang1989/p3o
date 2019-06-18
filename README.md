@@ -62,4 +62,4 @@ For complete list of hyperparameters, please refer to the paper appendix.
 
 # Issues
 
-Please create an issue here or contact [rasoolfa](https://github.com/rasoolfa)
+Please create an issue here or contact Rasool ([rasoolfa](https://github.com/rasoolfa))
