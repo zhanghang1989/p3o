@@ -19,9 +19,9 @@ This repository provides an implementation of P3O. If you use this code please c
 }
 
 ```
-# Acknowledgement - OpenAI Baselines
+# Acknowledgement 
 
-Special thanks to OpenAI for the Baselines implementations. Vectorized environment generation such as Atari and MujoCo, environment wrappers, monitoring, logging, etc are based/copied on/from [OpenAI Baselines](https://github.com/openai/baselines). 
+- Special thanks to OpenAI for the Baselines implementations. Vectorized environment generation such as Atari and MujoCo, environment wrappers, monitoring, logging, etc are based/copied on/from [OpenAI Baselines](https://github.com/openai/baselines). 
 
 [p3o/oailibs](https://github.com/zhanghang1989/p3o/tree/master/oailibs) contains related codes to OpenAI Baselines.
 
