@@ -60,4 +60,4 @@ python -u main.py --use_linear_lr_decay --use_ess_is_clipping --frames_waits 150
 
 # Issues
 
-Please create an issue here and contact [rasoolfa](https://github.com/rasoolfa)
+Please create an issue here or contact [rasoolfa](https://github.com/rasoolfa)
