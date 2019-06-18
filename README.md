@@ -58,6 +58,6 @@ python -u main.py --use_linear_lr_decay --use_ess_is_clipping --frames_waits 150
 
 'env' can be any of 49 atari games. For complete list of hyperparameters, please refer to the paper appendix. 
 
-#Issues
+# Issues
 
 Please create an issue here and contact rasoolfa@
