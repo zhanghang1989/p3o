@@ -49,3 +49,11 @@ export MXNET_CUDNN_AUTOTUNE_DEFAULT=0
 export MXNET_ENFORCE_DETERMINISM=1
 export OMP_NUM_THREADS=1
 ```
+
+# To run the code
+
+'''
+python -u main.py --use_linear_lr_decay --use_ess_is_clipping --frames_waits 15000 --sample_mult 6 --num_steps 16 --num_env 16 --save_freq 500 --log_interval 40 --replay_ratio 2 --replay_size 50000 --log_id log_0 --ent_coef 0.01 --seed 0 --env=BreakoutNoFrameskip-v4 --alg_name p3o --use_gae 
+'''
+
+'env' can be any of 49 atari games. For complete list of hyperparameters, please refer to paper appendix. 
