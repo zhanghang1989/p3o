@@ -4,7 +4,7 @@ P3O: Policy-on Policy-off Policy Optimization
 On-policy reinforcement learning (RL) algorithms have high sample complexity while off-policy algorithms are difficult to tune. Merging the two holds the promise to develop efficient algorithms that generalize across diverse environments. It is however challenging in practice to find suitable hyper-parameters that govern this trade off. This paper develops a simple algorithm named P3O that interleaves off-policy updates with on-policy updates. P3O uses the effective sample size between the behavior policy and the target policy to control how far they can be from each other and does not introduce any additional hyper-parameters. Extensive experiments on the Atari-2600 and MuJoCo benchmark suites show that this simple technique is highly effective in reducing the sample complexity of state-of-the-art algorithms.
 
 
-This repository provides the MXNet implementation of P3O. If you use this code please cite the paper using the bibtex reference below.
+This repository provides the MXNet implementation of [P3O: Policy-on Policy-off Policy Optimization](https://arxiv.org/abs/1905.01756). If you use this code please cite the paper using the bibtex reference below.
 
 ```
 @article{fakoorp3o,
@@ -58,9 +58,8 @@ For complete list of hyperparameters, please refer to the paper appendix.
 
 # Reporting Issues
 
-Please create an issue to contact or report an issue or contact [Rasool](https://github.com/rasoolfa)
+Please create an issue to contact or report an issue or contact [Rasool](https://github.com/rasoolfa).
 
 # Acknowledgement 
 - Special thanks to [Hang Zhang](https://github.com/zhanghang1989) and [Tong He](https://github.com/hetong007) for their helps and tireless efforts with MXNet implementation.
 - Vectorized environment generation such as Atari and MujoCo, environment wrappers, monitoring, logging, etc are based/copied on/from [OpenAI Baselines](https://github.com/openai/baselines). [p3o/oailibs](https://github.com/zhanghang1989/p3o/tree/master/oailibs) contains related codes to OpenAI Baselines.
-- 
