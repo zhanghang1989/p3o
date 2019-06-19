@@ -58,9 +58,9 @@ For complete list of hyperparameters, please refer to the paper appendix.
 
 # Reporting Issues
 
-Please create an issue to contact or report an issue or contact Rasool ([rasoolfa](https://github.com/rasoolfa))
+Please create an issue to contact or report an issue or contact [Rasool](https://github.com/rasoolfa)
 
 # Acknowledgement 
-- Special thanks to [Hang Zhang](https://github.com/zhanghang1989) and [Tong He] (https://github.com/hetong007) for their helps and tireless efforts with MXNet implementation.
+- Special thanks to [Hang Zhang](https://github.com/zhanghang1989) and [Tong He](https://github.com/hetong007) for their helps and tireless efforts with MXNet implementation.
 - Vectorized environment generation such as Atari and MujoCo, environment wrappers, monitoring, logging, etc are based/copied on/from [OpenAI Baselines](https://github.com/openai/baselines). [p3o/oailibs](https://github.com/zhanghang1989/p3o/tree/master/oailibs) contains related codes to OpenAI Baselines.
 - 
