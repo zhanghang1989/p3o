@@ -58,7 +58,7 @@ For complete list of hyperparameters, please refer to the paper appendix.
 
 # Reporting Issues
 
-Please create an issue to contact or report or ask question an issue in the repo's issues page or contact [Rasool](https://github.com/rasoolfa).
+Please create an issue to report a problem or to ask question in the repo's issues page or contact [Rasool](https://github.com/rasoolfa).
 
 # Acknowledgement 
 - Special thanks to [Hang Zhang](https://github.com/zhanghang1989) and [Tong He](https://github.com/hetong007) for their helps and tireless efforts with MXNet implementation.
