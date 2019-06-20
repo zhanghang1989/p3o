@@ -56,7 +56,7 @@ python -u main.py --use_linear_lr_decay --use_ess_is_clipping --frames_waits 150
 
 For complete list of hyperparameters, please refer to the paper appendix. 
 
-# Reporting Issues
+# Reporting Issues and Contacting 
 
 Please create an issue to report a problem or to ask question in the repo's issues page or contact [Rasool](https://github.com/rasoolfa).
 
